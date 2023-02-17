@@ -1,5 +1,5 @@
 import { View, Text, Stack, Button, Icon } from "native-base";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { ITodoModel } from "../types";
 import { Box } from "native-base";
 import { Feather, Ionicons } from "@expo/vector-icons";
@@ -13,6 +13,33 @@ interface TaskCardProps {
 }
 
 const TaskCard: FC<TaskCardProps> = ({ task, onDelete, onClickEdit }) => {
+  const [address, setAddress] = useState<
+    { region: string; country: string } | any
+  >({ region: "", country: "" });
+  useEffect(() => {
+    const getLocationAddress = async () => {
+      const { latitude, longitude } = task;
+      const response = await fetch(
+        `http://api.positionstack.com/v1/reverse?access_key=8f17342699b9b1f5b8c77f95a20b6530&query=${latitude},${longitude}`
+      );
+
+      if (!response.ok) {
+        const message = `An error has occured: ${response.status}`;
+        throw new Error(message);
+      }
+
+      const address = await response.json();
+      // console.log(address[0].region, address[0].country);
+      setAddress({
+        region: address.data[0].region,
+        country: address.data[0].country,
+      });
+    };
+
+    getLocationAddress();
+  }, [task]);
+  // console.log(address);
+  // console.log(address.data[0].region, address.data[0].country);
   return (
     <Box
       width="full"
@@ -29,9 +56,18 @@ const TaskCard: FC<TaskCardProps> = ({ task, onDelete, onClickEdit }) => {
           <Text fontWeight="bold" fontSize="md" mb="8">
             {task.title}
           </Text>
-          <Text color="gray.400" numberOfLines={1} width="56">
+          <Text color="gray.600" numberOfLines={1} width="56" mb="1">
             {task.description}
           </Text>
+          <Box flexDirection="row" alignItems="center">
+            <Icon as={Ionicons} name="location" size="md" color="gray.400" />
+            <Text color="gray.400" numberOfLines={1}>
+              {address.region},
+            </Text>
+            <Text color="gray.400" numberOfLines={1}>
+              {address.country}
+            </Text>
+          </Box>
         </Box>
         <Box justifyContent="space-between" alignItems="flex-end">
           <Box
