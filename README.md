@@ -18,6 +18,10 @@ Install my-project with yarn
 
 ## How the app works
 
+- Allow the app to pinpoint your location
+
+![Location](/assets/location.jpeg "Location")
+
 - Create tasks
   - title
   - description
