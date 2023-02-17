@@ -1,20 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import "reflect-metadata";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { NativeBaseProvider } from "native-base";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Navigation from "./navigation";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { DatabaseConnectionProvider } from "./contexts/database";
+import theme from "./theme";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider
+      style={{
+        flex: 1,
+      }}
+    >
+      <DatabaseConnectionProvider>
+        <GestureHandlerRootView
+          style={{
+            flex: 1,
+          }}
+        >
+          <NativeBaseProvider theme={theme}>
+            <BottomSheetModalProvider>
+              <Navigation />
+            </BottomSheetModalProvider>
+          </NativeBaseProvider>
+        </GestureHandlerRootView>
+      </DatabaseConnectionProvider>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
