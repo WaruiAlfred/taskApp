@@ -59,23 +59,25 @@ const TaskListScreenBase: FC<TaskListScreenBaseProps> = ({
   const btmSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ["85%"], []);
   const { todosRepository } = useDatabaseConnection();
-  // const [address, setAddress] = useState<any>(null);
-
-  // useEffect(() => {
-  const getLocationAddress = async (task: ITodoModel) => {
-    const { latitude, longitude } = task;
-    const address = await fetch(
-      `http://api.positionstack.com/v1/reverse?access_key=8f17342699b9b1f5b8c77f95a20b6530&query=${latitude},${longitude}`
-    );
-    // console.log(address[0].region, address[0].country);
-    // setAddress(address);
-    return address;
-  };
-
-  // getLocationAddress();
-  // }, [tasks]);
 
   const toast = useToast();
+
+  useEffect(() => {
+    const locationHandler = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        toast.show({
+          title: "Location permission not granted",
+          description: "Please enable location permission to use this feature",
+        });
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      return location;
+    };
+    locationHandler();
+  }, [setLocation]);
 
   return (
     <SafeAreaView style={{ flexGrow: 1, flex: 1, backgroundColor: "white" }}>
@@ -121,23 +123,22 @@ const TaskListScreenBase: FC<TaskListScreenBaseProps> = ({
                     });
                   }}
                   onClickEdit={async () => {
-                    let { status } =
-                      await Location.requestForegroundPermissionsAsync();
-                    if (status !== "granted") {
-                      toast.show({
-                        title: "Location permission not granted",
-                        description:
-                          "Please enable location permission to use this feature",
-                      });
-                      return;
-                    }
-                    let location = await Location.getCurrentPositionAsync({});
-                    setLocation(location);
+                    // let { status } =
+                    //   await Location.requestForegroundPermissionsAsync();
+                    // if (status !== "granted") {
+                    //   toast.show({
+                    //     title: "Location permission not granted",
+                    //     description:
+                    //       "Please enable location permission to use this feature",
+                    //   });
+                    //   return;
+                    // }
+                    // let location = await Location.getCurrentPositionAsync({});
+                    // setLocation(location);
                     setTaskBeingEdited(item);
                     setEditing(true);
                     btmSheetModalRef.current?.present();
                   }}
-                  getLocationAddress={getLocationAddress}
                 />
               )}
             />
