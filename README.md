@@ -39,6 +39,7 @@ Install my-project with yarn
 - Expo
 - Formik
 - Native base
+- typeorm
 
 ## License
 
