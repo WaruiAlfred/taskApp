@@ -63,6 +63,12 @@ const AddTaskScreen: FC<AddTaskScreenProps> = ({
     const locPromise = await fetch(
       `http://api.positionstack.com/v1/reverse?access_key=8f17342699b9b1f5b8c77f95a20b6530&query=${location?.coords.latitude},${location?.coords.longitude}`
     );
+
+    if (!locPromise.ok) {
+      const message = `An error has occured: ${locPromise.status}`;
+      throw new Error(message);
+    }
+
     const locData = await locPromise.json();
 
     const locationName = locData.data[0].label;
